@@ -1,6 +1,7 @@
 # TODO
-Styling
-Unit test
+* Styling
+* Unit test
+* Fix gitignore
 
 # Interview
 
