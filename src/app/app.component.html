@@ -1,11 +1,3 @@
-<!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
-<!-- * * * * * * * * * * * The content below * * * * * * * * * * * -->
-<!-- * * * * * * * * * * is only a placeholder * * * * * * * * * * -->
-<!-- * * * * * * * * * * and can be replaced.  * * * * * * * * * * -->
-<!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
-<!-- * * * * * * * * * Delete the template below * * * * * * * * * -->
-<!-- * * * * * * * to get started with your project! * * * * * * * -->
-<!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
 
 <style>
   :host {
@@ -43,7 +35,12 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
-
+  .grey-out {
+    filter: grayscale(100%) brightness(0);
+  }
+  .non-grey-out {
+    filter: grayscale(0%);
+  }
   h1 {
     font-size: 3.125rem;
     color: var(--gray-900);
@@ -153,14 +150,7 @@
     margin-top: 1.5rem;
   }
 
-  .social-links path {
-    transition: fill 0.3s ease;
-    fill: var(--gray-400);
-  }
-
-  .social-links a:hover svg path {
-    fill: var(--gray-900);
-  }
+  
 
   @media screen and (max-width: 650px) {
     .content {
@@ -182,24 +172,30 @@
     <div class="left-side">
       <h1>{{ title }}</h1>
       <p>Guess the pokemon from the outline</p>
+      <div *ngIf="loading">Loading ...</div>
+      <div *ngIf="currentPokemon && !loading">
+        <img src="{{ currentPokemon.image }}" class="grey-out" [ngClass]="{ 'grey-out': !result, 'non-grey-out': result }">
+        <h2 *ngIf="!result">Pick a name on the right</h2>
+        <h2 *ngIf="result"> {{ result.correct_name | titlecase }}</h2>
+        <button (click)="getRandomPokemon()">Get another pokemon</button>
+      </div>
     </div>
     <div class="divider" role="separator" aria-label="Divider"></div>
     <div class="right-side">
-      <div class="pill-group">
-        @for (item of [
-          { title: 'Explore the Docs', link: 'https://angular.dev' },
-          { title: 'Learn with Tutorials', link: 'https://angular.dev/tutorials' },
-          { title: 'CLI Docs', link: 'https://angular.dev/tools/cli' },
-          { title: 'Angular Language Service', link: 'https://angular.dev/tools/language-service' },
-          { title: 'Angular DevTools', link: 'https://angular.dev/tools/devtools' },
-        ]; track item.title) {
+      <div *ngIf="resultLoading">Checking ...</div>
+      <div *ngIf="result">
+        <div *ngIf="result.is_correct"> Well done! This is {{ result.correct_name | titlecase}} indeed!</div>
+        <div *ngIf="!result.is_correct"> Not quite! This is {{ result.correct_name | titlecase}}.</div>
+      </div>
+      <div *ngIf="!result && currentPokemon && currentPokemon.id" class="pill-group">
+        @for (item of currentPokemon.guesses; track item) {
           <a
             class="pill"
-            [href]="item.link"
+            [href]=""
             target="_blank"
-            rel="noopener"
+            (click)="checkPokemon(currentPokemon.id, item)"
           >
-            <span>{{ item.title }}</span>
+            <span>{{ item | titlecase}}</span>
           </a>
         }
       </div>
