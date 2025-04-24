@@ -1,7 +1,7 @@
-# TODO
-* Styling
-* Unit test
-* Fix gitignore
+# Run locally
+npm install
+ng serve
+
 
 # Interview
 
